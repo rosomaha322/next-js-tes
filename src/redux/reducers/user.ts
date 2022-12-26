@@ -24,13 +24,13 @@ export const userReducer: Reducer<
     case RegisterActionTypes.REGISTER_REQUEST:
       return {
         ...state,
+        error: undefined,
         loading: true,
       };
 
     case RegisterActionTypes.REGISTER_SUCCESS:
       return {
         ...state,
-        test: 2,
         loading: false,
       };
 

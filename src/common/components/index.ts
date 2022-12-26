@@ -4,6 +4,7 @@ import PublicLayout from './layouts/publicLayout';
 import ButtonPrimary from './formElements/buttonPrimary';
 import Loader from './loader';
 import FormTitle from './formElements/formTitle';
+import ErrorBlock from './formElements/errorBlock';
 
 export {
   FormTextField,
@@ -12,4 +13,5 @@ export {
   ButtonPrimary,
   Loader,
   FormTitle,
+  ErrorBlock,
 };

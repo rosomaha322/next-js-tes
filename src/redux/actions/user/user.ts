@@ -13,6 +13,7 @@ export const registerActions = createAsyncAction(
     name: string;
     confirm_password: string;
     setErrors: (errors: FormikErrors<{ [key: string]: string }>) => void;
+    setStatus: (data: string) => void;
   },
   { email: string },
   { error: RegisterErrorType }

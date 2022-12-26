@@ -1,6 +1,11 @@
 import { Form, Field, Formik, FormikProps, FormikErrors } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
-import { FormWrapper, ButtonPrimary, Loader } from '@/src/common/components';
+import {
+  FormWrapper,
+  ButtonPrimary,
+  Loader,
+  ErrorBlock,
+} from '@/src/common/components';
 import { BUTTON_SIZES } from '@/src/constants/elementsUI';
 import { registerActions } from '@/src/redux/actions/user/user';
 import { FormTextField } from '@/src/common/components';
@@ -52,7 +57,9 @@ const validate = (values: FormValues) => {
 const SignUpForm = () => {
   const buttonText = 'SUBMIT';
   const dispatch = useDispatch();
-  const { loading } = useSelector((state: IRootState) => state.user);
+  const { loading, error } = useSelector((state: IRootState) => state.user);
+
+  const { message } = error || {};
 
   return (
     <>
@@ -63,17 +70,19 @@ const SignUpForm = () => {
           password: '',
           confirm_password: '',
         }}
-        onSubmit={(values, { setErrors }) => {
-          dispatch(registerActions.request({ ...values, setErrors }));
+        onSubmit={(values, { setErrors, setStatus }) => {
+          dispatch(
+            registerActions.request({ ...values, setErrors, setStatus })
+          );
         }}
         validate={validate}
       >
         {({
           touched,
           errors,
-          submitCount,
+          status,
           isValid,
-          isSubmitting,
+          isSubmitting
         }: FormikProps<FormValues>) => (
           <>
             <FormWrapper title="Register">
@@ -132,9 +141,11 @@ const SignUpForm = () => {
                       size={BUTTON_SIZES.medium}
                       type="submit"
                       successMessage="Thank You"
-                      isSubmitted={!!(submitCount && isValid && isSubmitting)}
+                      isSubmitted={!!(isValid && isSubmitting && status !== 'error')}
                     />
                   </div>
+
+                  {message && <ErrorBlock error={message} />}
                 </div>
               </Form>
             </FormWrapper>

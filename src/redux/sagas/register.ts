@@ -23,10 +23,15 @@ export function* registerRequest(
 
     yield put(registerActions.success(response));
   } catch (error: RegisterResponseType) {
-    yield put(registerActions.failure({ error }));
+    yield put(
+      registerActions.failure({
+        error: { message: 'OOPS something went wrong' },
+      })
+    );
     const {
-      payload: { setErrors },
+      payload: { setErrors, setStatus },
     } = action;
-    yield call(setErrors, error.errors || {});
+    yield call(setErrors, error?.errors || {});
+    yield call(setStatus, 'error');
   }
 }
