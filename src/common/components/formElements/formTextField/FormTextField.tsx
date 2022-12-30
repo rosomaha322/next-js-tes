@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Check from '/public/assets/images/svg/Check.svg';
 import Cross from '/public/assets/images/svg/Cross.svg';
+import ErrorBlock from '../errorBlock';
 
 // type
 import { FormTextFieldPropsType } from './FormTextFieldTypes';
@@ -17,6 +18,7 @@ const FormTextField: React.FC<FormTextFieldPropsType> = ({
   ...props
 }) => {
   const { value } = field;
+  let errorBlock = null;
 
   const isActive = useMemo(() => !!value, [value]);
 
@@ -30,36 +32,43 @@ const FormTextField: React.FC<FormTextFieldPropsType> = ({
     return src;
   }, [error, value]);
 
-  return (
-    <StyledFloatedLabel>
-      <StyledInput
-        {...field}
-        {...props}
-        type={type}
-        errorStyles={!!error}
-        hasValue={!!src}
-        disabled={!!disabled}
-      />
-      {placeholder && (
-        <label className={isActive ? 'active' : ''} htmlFor="email">
-          {src && (
-            <Image
-              alt="Mountains"
-              src={src}
-              quality={100}
-              width={17}
-              style={{
-                maxWidth: '100%',
-                height: 'auto',
-                paddingRight: '5px',
-              }}
-            />
-          )}
+  if (error) {
+    errorBlock = <ErrorBlock error={error} />;
+  }
 
-          {placeholder}
-        </label>
-      )}
-    </StyledFloatedLabel>
+  return (
+    <>
+      <StyledFloatedLabel>
+        <StyledInput
+          {...field}
+          {...props}
+          type={type}
+          errorStyles={!!error}
+          hasValue={!!src}
+          disabled={!!disabled}
+        />
+        {placeholder && (
+          <label className={isActive ? 'active' : ''} htmlFor="email">
+            {src && (
+              <Image
+                alt="Mountains"
+                src={src}
+                quality={100}
+                width={17}
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  paddingRight: '5px',
+                }}
+              />
+            )}
+
+            {placeholder}
+          </label>
+        )}
+      </StyledFloatedLabel>
+      {errorBlock}
+    </>
   );
 };
 export default FormTextField;

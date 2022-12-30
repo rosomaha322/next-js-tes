@@ -5,6 +5,7 @@ import ButtonPrimary from './formElements/buttonPrimary';
 import Loader from './loader';
 import FormTitle from './formElements/formTitle';
 import ErrorBlock from './formElements/errorBlock';
+import Devtools from './devtools';
 
 export {
   FormTextField,
@@ -14,4 +15,5 @@ export {
   Loader,
   FormTitle,
   ErrorBlock,
+  Devtools,
 };

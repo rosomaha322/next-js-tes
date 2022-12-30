@@ -1,9 +1,15 @@
 import type { AppProps } from 'next/app';
 import { Inter } from '@next/font/google';
-import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { theme, GlobalStyle } from '@/src/common/theme';
-import { wrapper } from '@/src/redux/store';
+import { useState } from 'react';
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+import { config } from '@/src/lib/react-query-config';
+import { Devtools } from '@/src/common/components';
 
 const inter = Inter({
   weight: ['700', '500', '400'],
@@ -17,17 +23,22 @@ export const themeObject = {
   fonts: { inter },
 };
 
-function App({ Component, ...rest }: AppProps) {
-  const { store, props } = wrapper.useWrappedStore(rest);
+function App({ Component, pageProps }: AppProps) {
+  // This ensures that data is not shared
+  // between different users and requests
+  const [queryClient] = useState(() => new QueryClient(config));
 
   return (
     <>
-      <Provider store={store as any}>
-        <ThemeProvider theme={themeObject}>
-          <GlobalStyle />
-          <Component {...props.pageProps} />
-        </ThemeProvider>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <ThemeProvider theme={themeObject}>
+            <GlobalStyle />
+            <Component {...pageProps} />
+          </ThemeProvider>
+          <Devtools />
+        </Hydrate>
+      </QueryClientProvider>
     </>
   );
 }
