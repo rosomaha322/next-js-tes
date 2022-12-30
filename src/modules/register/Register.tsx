@@ -13,7 +13,6 @@ import { FormValues } from '@/src/api/user';
 // styles
 import { StyledInputsWrapper } from './RegisterStyles';
 
-
 const validate = (values: FormValues) => {
   const errors: FormikErrors<{ [key: string]: string }> = {};
   const required = 'Required';

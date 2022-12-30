@@ -4,13 +4,15 @@ import { FormValues } from '@/src/api/user';
 import { AxiosResponse } from 'axios';
 
 type CustomError = {
-    response: {
-        data: {
-            errors?: FormValues
-        }
-    }
-} & Error
+  response: {
+    data: {
+      errors?: FormValues;
+    };
+  };
+} & Error;
 
 export const useSubmitRegister = () => {
-  return useMutation<AxiosResponse, CustomError, FormValues>((values) => api.registerUser(values));
+  return useMutation<AxiosResponse, CustomError, FormValues>((values) =>
+    api.registerUser(values)
+  );
 };
