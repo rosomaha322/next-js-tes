@@ -1,5 +1,4 @@
 import { Form, Field, Formik, FormikProps, FormikErrors } from 'formik';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   FormWrapper,
   ButtonPrimary,
@@ -7,19 +6,13 @@ import {
   ErrorBlock,
 } from '@/src/common/components';
 import { BUTTON_SIZES } from '@/src/constants/elementsUI';
-import { registerActions } from '@/src/redux/actions/user/user';
 import { FormTextField } from '@/src/common/components';
-import { IRootState } from '@/src/redux/reducers';
+import { useSubmitRegister } from '@/src/hooks/user';
+import { FormValues } from '@/src/api/user';
 
 // styles
 import { StyledInputsWrapper } from './RegisterStyles';
 
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
 
 const validate = (values: FormValues) => {
   const errors: FormikErrors<{ [key: string]: string }> = {};
@@ -56,9 +49,7 @@ const validate = (values: FormValues) => {
 
 const SignUpForm = () => {
   const buttonText = 'SUBMIT';
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: IRootState) => state.user);
-
+  const { mutate, isLoading, isSuccess, error } = useSubmitRegister();
   const { message } = error || {};
 
   return (
@@ -70,24 +61,24 @@ const SignUpForm = () => {
           password: '',
           confirm_password: '',
         }}
-        onSubmit={(values, { setErrors, setStatus }) => {
-          dispatch(
-            registerActions.request({ ...values, setErrors, setStatus })
-          );
+        onSubmit={(values, { setErrors, resetForm }) => {
+          mutate(values, {
+            onSuccess: () => resetForm(),
+            onError: (e) => {
+              const {
+                response: { data },
+              } = e;
+              setErrors(data?.errors || {});
+            },
+          });
         }}
         validate={validate}
       >
-        {({
-          touched,
-          errors,
-          status,
-          isValid,
-          isSubmitting
-        }: FormikProps<FormValues>) => (
+        {({ touched, errors, dirty }: FormikProps<FormValues>) => (
           <>
             <FormWrapper title="Register">
               <Form className="auth-form sign-up-form">
-                <Loader show={loading} />
+                <Loader show={isLoading} />
                 <div className="form-body">
                   <StyledInputsWrapper>
                     <div className="row-wrapper">
@@ -141,10 +132,10 @@ const SignUpForm = () => {
                       size={BUTTON_SIZES.medium}
                       type="submit"
                       successMessage="Thank You"
-                      isSubmitted={!!(isValid && isSubmitting && status !== 'error')}
+                      isSubmitted={!dirty && isSuccess}
+                      disabled={isLoading}
                     />
                   </div>
-
                   {message && <ErrorBlock error={message} />}
                 </div>
               </Form>
